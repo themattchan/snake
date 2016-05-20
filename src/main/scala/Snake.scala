@@ -1,6 +1,7 @@
 package snake
 
 import scala.util.Random
+import scala.collection.immutable.Queue
 
 import scala.swing._
 import scala.swing.Reactions.Reaction
@@ -30,10 +31,33 @@ object SnakeGui extends SimpleSwingApplication {
   }
 }
 
-trait Space
+case class Point(x: Int, y: Int) {
+  def +(that: Vector) = Point(this.x+that.x, this.y+that.y)
+}
+case class Vector(x: Int, y: Int)
+
+sealed trait Space {
+  def canMove() = this match {
+    case Empty => true
+    case _     => false
+  }
+}
 case class Wall() extends Space
 case class Body() extends Space
 case object Empty extends Space
+
+sealed trait Direction {
+  def toVector(): Vector = this match {
+    case North => Vector(0,1)
+    case East  => Vector(1,0)
+    case South => Vector(0,-1)
+    case West  => Vector(-1,0)
+  }
+}
+case object North extends Direction
+case object East  extends Direction
+case object South extends Direction
+case object West  extends Direction
 
 class Game(width: Int, height: Int) extends GridPanel(width,height) {
   type Board = Array[Array[Space]]
@@ -41,8 +65,14 @@ class Game(width: Int, height: Int) extends GridPanel(width,height) {
   val cellSize = 10 // px on each side of cell
   val drawSize = new Dimension(width * cellSize, height * cellSize)
 
-  val board = Array.fill(height)(Array.fill(width)(Empty)) //Array.ofDim[Space](width,height)
+  val board: Board = Array.fill(height)(Array.fill(width)(Empty))
 
+  var snake = Queue[Point](Point(width/2, height/2))
+  var sdir = North
 
-  var snake = new List()
+  def move() {
+    val (_, snake1) = snake.dequeue
+    val head = snake1.head+dirToVector(sdir)
+
+  }
 }
