@@ -37,7 +37,7 @@ case class Point(x: Int, y: Int) {
 case class Vector(x: Int, y: Int)
 
 sealed trait Space {
-  def canMove() = this match {
+  def isValid() = this match {
     case Empty => true
     case _     => false
   }
