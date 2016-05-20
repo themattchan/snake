@@ -59,6 +59,8 @@ case object East  extends Direction
 case object South extends Direction
 case object West  extends Direction
 
+case object GameOverExn extends Exception("Game Over!", null)
+
 class Game(width: Int, height: Int) extends GridPanel(width,height) {
   type Board = Array[Array[Space]]
 
@@ -72,7 +74,9 @@ class Game(width: Int, height: Int) extends GridPanel(width,height) {
 
   def move() {
     val (_, snake1) = snake.dequeue
-    val head = snake1.head+dirToVector(sdir)
-
+    val (head @ Point(hx,hy)) = snake1.head+dirToVector(sdir)
+    if (board(hx)(hy).isValid) {
+      snake = head +: snake1
+    } else throw GameOverExn
   }
 }
